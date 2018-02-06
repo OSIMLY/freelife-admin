@@ -1,16 +1,21 @@
+// 导入数据请求组件
 import axios from 'axios'
+// 导入提示组件
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import { getToken } from '@/utils/auth'
 
 // 创建axios实例
 const service = axios.create({
+  // 设置基础路径
   baseURL: process.env.BASE_API, // api的base_url
   timeout: 15000 // 请求超时时间
 })
 
 // request拦截器
+// 发起请求之前修改参数
 service.interceptors.request.use(config => {
+  // 如果存在令牌
   if (store.getters.token) {
     config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   }
@@ -42,6 +47,7 @@ service.interceptors.response.use(
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          // 仓库更改状态
           store.dispatch('FedLogOut').then(() => {
             location.reload()// 为了重新实例化vue-router对象 避免bug
           })

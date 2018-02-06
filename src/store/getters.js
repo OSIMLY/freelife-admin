@@ -1,3 +1,4 @@
+// 子模块状态派生为根模块
 const getters = {
   sidebar: state => state.app.sidebar,
   token: state => state.user.token,

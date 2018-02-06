@@ -1,7 +1,7 @@
 /**
  * Created by jiachenpan on 16/11/18.
  */
-
+// 解析时间函数
 export function parseTime(time, cFormat) {
   if (arguments.length === 0) {
     return null

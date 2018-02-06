@@ -1,8 +1,13 @@
+// 导入 cookie 模块
 import Cookies from 'js-cookie'
 
+// 定义 app 模块
 const app = {
+  // 定义状态
   state: {
+    // 边栏
     sidebar: {
+      // 是否打开
       opened: !+Cookies.get('sidebarStatus')
     }
   },

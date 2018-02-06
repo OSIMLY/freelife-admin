@@ -16,8 +16,35 @@ const service = axios.create({
 // 发起请求之前修改参数
 service.interceptors.request.use(config => {
   // 如果存在令牌
-  if (store.getters.token) {
+  debugger
+  if (!store.getters.token) {
     config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
+  } else {
+    fetch('https://cloud.minapp.com/api/oauth2/hydrogen/openapi/authorize/', {
+      method: 'POST',
+      mode: 'cors',
+      credentials: 'include',
+      redirect: 'follow',
+      body: JSON.stringify({
+        client_id: '24ccc646c434f0b2b31a',
+        client_secret: '2056d3f1a7cfd3d83b5aab1a404737eb1b3b397f'
+      })
+    }).then((res) => {
+      console.log(res)
+    })
+    const authorize = axios.create({
+      url: 'https://cloud.minapp.com/api/oauth2/hydrogen/openapi/authorize/',
+      method: 'POST',
+      data: {
+        client_id: '24ccc646c434f0b2b31a',
+        client_secret: '2056d3f1a7cfd3d83b5aab1a404737eb1b3b397f'
+      }
+    })
+    authorize().then((res) => {
+      console.log(res)
+    }).catch((err) => {
+      console.log(err)
+    })
   }
   return config
 }, error => {
@@ -29,9 +56,9 @@ service.interceptors.request.use(config => {
 // respone拦截器
 service.interceptors.response.use(
   response => {
-  /**
-  * code为非20000是抛错 可结合自己业务进行修改
-  */
+    /**
+    * code为非20000是抛错 可结合自己业务进行修改
+    */
     const res = response.data
     if (res.code !== 20000) {
       Message({

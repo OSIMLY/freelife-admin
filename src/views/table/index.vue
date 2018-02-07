@@ -37,7 +37,7 @@
 </template>
 
 <script>
-import { getList } from '@/api/table'
+import { getList, getTable } from '@/api/table'
 
 export default {
   data() {
@@ -65,6 +65,9 @@ export default {
       getList(this.listQuery).then(response => {
         this.list = response.data.items
         this.listLoading = false
+      })
+      getTable(24628).then((res) => {
+        console.log(res)
       })
     }
   }

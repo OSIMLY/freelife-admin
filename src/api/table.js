@@ -7,3 +7,12 @@ export function getList(params) {
     params
   })
 }
+
+export function getTable(params) {
+  debugger
+  return request({
+    url: '/params/record/',
+    method: 'get',
+    params
+  })
+}

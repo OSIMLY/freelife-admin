@@ -1,13 +1,18 @@
 // 导入数据请求组件
 import axios from 'axios'
+import qs from 'qs'
 // 导入提示组件
 import { Message, MessageBox } from 'element-ui'
 import store from '../store'
 import { getToken } from '@/utils/auth'
 
 // 创建axios实例
+let token = ''
 const service = axios.create({
   // 设置基础路径
+  headers: {
+    Authorization: 'Bearer ' + token
+  },
   baseURL: process.env.BASE_API, // api的base_url
   timeout: 15000 // 请求超时时间
 })
@@ -16,34 +21,36 @@ const service = axios.create({
 // 发起请求之前修改参数
 service.interceptors.request.use(config => {
   // 如果存在令牌
-  debugger
   if (!store.getters.token) {
     config.headers['X-Token'] = getToken() // 让每个请求携带自定义token 请根据实际情况自行修改
   } else {
-    fetch('https://cloud.minapp.com/api/oauth2/hydrogen/openapi/authorize/', {
-      method: 'POST',
-      mode: 'cors',
-      credentials: 'include',
-      redirect: 'follow',
-      body: JSON.stringify({
+    axios({
+      method: 'post',
+      url: 'https://cloud.minapp.com/api/oauth2/hydrogen/openapi/authorize/',
+      data: JSON.stringify({
         client_id: '24ccc646c434f0b2b31a',
         client_secret: '2056d3f1a7cfd3d83b5aab1a404737eb1b3b397f'
       })
     }).then((res) => {
-      console.log(res)
-    })
-    const authorize = axios.create({
-      url: 'https://cloud.minapp.com/api/oauth2/hydrogen/openapi/authorize/',
-      method: 'POST',
-      data: {
-        client_id: '24ccc646c434f0b2b31a',
-        client_secret: '2056d3f1a7cfd3d83b5aab1a404737eb1b3b397f'
-      }
-    })
-    authorize().then((res) => {
-      console.log(res)
-    }).catch((err) => {
-      console.log(err)
+      debugger
+      axios({
+        method: 'post',
+        url: 'https://cloud.minapp.com/api/oauth2/access_token/',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: qs.stringify({
+          client_id: '24ccc646c434f0b2b31a',
+          client_secret: '2056d3f1a7cfd3d83b5aab1a404737eb1b3b397f',
+          grant_type: 'authorization_code',
+          code: res.data.code
+        })
+      }).then((res) => {
+        token = res.data.access_token
+        console.log(res.data.access_token)
+      }).catch((err) => {
+        console.log(err)
+      })
     })
   }
   return config
